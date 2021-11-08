@@ -59,6 +59,66 @@
       "name": "application.db1.datasource.driver-class-name",
       "type": "java.lang.String",
       "description": "Description for application.db1.datasource.driver-class-name."
+    },
+    {
+      "name": "application.db2.jpa.hibernate.ddl-auto",
+      "type": "java.lang.String",
+      "description": "Description for application.db2.jpa.hibernate.ddl-auto."
+    },
+    {
+      "name": "application.db2.jpa.open-in-view",
+      "type": "java.lang.String",
+      "description": "Description for application.db2.jpa.open-in-view."
+    },
+    {
+      "name": "application.db2.jpa.generate-ddl",
+      "type": "java.lang.String",
+      "description": "Description for application.db2.jpa.generate-ddl."
+    },
+    {
+      "name": "application.db2.jpa.show-sql",
+      "type": "java.lang.String",
+      "description": "Description for application.db2.jpa.show-sql."
+    },
+    {
+      "name": "application.db2.datasource.hikari.maximum-pool-size",
+      "type": "java.lang.String",
+      "description": "Description for application.db2.datasource.hikari.maximum-pool-size."
+    },
+    {
+      "name": "application.db2.datasource.hikari.max-lifetime",
+      "type": "java.lang.String",
+      "description": "Description for application.db2.datasource.hikari.max-lifetime."
+    },
+    {
+      "name": "application.db2.datasource.hikari.idle-timeout",
+      "type": "java.lang.String",
+      "description": "Description for application.db2.datasource.hikari.idle-timeout."
+    },
+    {
+      "name": "application.db2.datasource.hikari.connection-timeout",
+      "type": "java.lang.String",
+      "description": "Description for application.db2.datasource.hikari.connection-timeout."
+    },
+    {
+      "name": "application.db2.datasource.password",
+      "type": "java.lang.String",
+      "description": "Description for application.db2.datasource.password."
+    },
+    {
+      "name": "application.db2.datasource.username",
+      "type": "java.lang.String",
+      "description": "Description for application.db2.datasource.username."
+    },
+    {
+      "name": "application.db2.datasource.url",
+      "type": "java.lang.String",
+      "description": "Description for application.db2.datasource.url."
+    },
+    {
+      "name": "application.db2.datasource.driver-class-name",
+      "type": "java.lang.String",
+      "description": "Description for application.db2.datasource.driver-class-name."
     }
   ]
 }

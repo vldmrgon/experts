@@ -10,10 +10,26 @@ application:
       idle-timeout: 600000
       max-lifetime: 1800000
       maximum-pool-size: 20
-
   jpa:
     show-sql: true
     generate-ddl: true
     open-in-view: true
     hibernate:
       ddl-auto: create-drop
+ db2:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3307/db2
+    username: myDb
+    password: myDb
+    hikari:
+     connection-timeout: 30000
+     idle-timeout: 600000
+     max-lifetime: 1800000
+     maximum-pool-size: 20
+  jpa:
+    show-sql: true
+    generate-ddl: true
+    open-in-view: true
+    hibernate:
+     ddl-auto: create-drop

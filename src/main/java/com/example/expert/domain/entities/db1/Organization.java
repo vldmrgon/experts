@@ -1,4 +1,4 @@
-package com.example.expert.domain.entities;
+package com.example.expert.domain.entities.db1;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,7 +9,7 @@ import javax.persistence.Id;
  * Entity class Organization.
  *
  * @author Vladimir Goncharenko
- * @email vldmrgon@gmail.com
+ * email vldmrgon@gmail.com
  * @since 07/11/2021
  */
 
