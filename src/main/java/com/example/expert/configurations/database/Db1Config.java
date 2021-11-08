@@ -25,7 +25,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * Configuration for connecting database Db1.
  *
  * @author Vladimir Goncharenko
- * @email vldmrgon@gmail.com
+ * email vldmrgon@gmail.com
  * @since 07/11/2021
  */
 
@@ -73,7 +73,7 @@ public class Db1Config {
         hibernateProperties.determineHibernateProperties(db1JpaProperties.getProperties(), new HibernateSettings());
     return builder
         .dataSource(dataSource)
-        .packages("com.example.expert.domain")
+        .packages(PACKAGE_WITH_ENTITIES)
         .persistenceUnit("db1")
         .properties(properties)
         .build();
