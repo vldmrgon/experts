@@ -38,8 +38,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 )
 public class Db1Config {
 
-  private final String PACKAGE_WITH_ENTITIES = "com.example.expert.domain.entities";
-
   @Bean
   @Primary
   @ConfigurationProperties(prefix = "application.db1.datasource")
@@ -73,7 +71,7 @@ public class Db1Config {
         hibernateProperties.determineHibernateProperties(db1JpaProperties.getProperties(), new HibernateSettings());
     return builder
         .dataSource(dataSource)
-        .packages(PACKAGE_WITH_ENTITIES)
+        .packages("com.example.expert.domain.entities.db1")
         .persistenceUnit("db1")
         .properties(properties)
         .build();
