@@ -10,7 +10,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -22,7 +21,16 @@ import javax.sql.DataSource;
 import java.util.Map;
 
 /**
- * Configuration for connecting database Db2.
+ * Configuration for connecting to database.
+ * <p>
+ * For use this template, should change five parameters:
+ * <p>
+ * 1) Add a name database to entityManagerFactoryRef, for example: [nameDatabase]EntityManagerFactory <br>
+ * 2) Add a name database to transactionManagerRet, for example: [nameDatabase]TransactionManager <br>
+ * 3) basePackages (add path to repository packages) <br>
+ * 4) name class (change to [database]Config) <br>
+ * 5) NAME_DATABASE (name a new database) <br>
+ * 6) PACKAGE_WITH_ENTITIES (path to entity packages) <br>
  *
  * @author Vladimir Goncharenko
  * @since 07/11/2021
@@ -37,44 +45,48 @@ import java.util.Map;
 )
 public class Db2Config {
 
-    @Bean
-    @ConfigurationProperties(prefix = "application.db2.datasource")
-    public DataSourceProperties db2DataSourceProperties() {
+    private static final String NAME_DATABASE = "db2";
+    private static final String PACKAGE_WITH_ENTITIES = "com.example.expert.domain.entities.db2";
+
+    @Bean(NAME_DATABASE + "DataSourceProperties")
+    @ConfigurationProperties(prefix = "application." + NAME_DATABASE + ".datasource")
+    public DataSourceProperties dbDataSourceProperties() {
         return new DataSourceProperties();
     }
 
-    @Bean
-    @ConfigurationProperties("application.db2.datasource.hikari")
-    public HikariDataSource db2HikariDataSource(
-            @Qualifier("db2DataSourceProperties") DataSourceProperties db2DataSourceProperties) {
-        return (HikariDataSource) db2DataSourceProperties.initializeDataSourceBuilder().build();
+    @Bean(NAME_DATABASE + "HikariDataSource")
+    @ConfigurationProperties("application." + NAME_DATABASE + ".datasource.hikari")
+    public HikariDataSource dbHikariDataSource(
+            @Qualifier(NAME_DATABASE + "DataSourceProperties") DataSourceProperties dbDataSourceProperties) {
+        return (HikariDataSource) dbDataSourceProperties.initializeDataSourceBuilder().build();
     }
 
-    @Bean
-    @ConfigurationProperties("application.db2.jpa")
-    public JpaProperties db2JpaProperties() {
+    @Bean(NAME_DATABASE + "JpaProperties")
+    @ConfigurationProperties("application." + NAME_DATABASE + ".jpa")
+    public JpaProperties dbJpaProperties() {
         return new JpaProperties();
     }
 
-    @Bean
-    public LocalContainerEntityManagerFactoryBean db2EntityManagerFactory(
+    @Bean(NAME_DATABASE + "EntityManagerFactory")
+    public LocalContainerEntityManagerFactoryBean dbEntityManagerFactory(
             EntityManagerFactoryBuilder builder,
-            @Qualifier("db2HikariDataSource") DataSource dataSource,
-            @Qualifier("db2JpaProperties") JpaProperties db2JpaProperties,
-            HibernateProperties hibernateProperties) {
+            @Qualifier(NAME_DATABASE + "HikariDataSource") DataSource dataSource,
+            @Qualifier(NAME_DATABASE + "JpaProperties") JpaProperties dbJpaProperties,
+            HibernateProperties hibernateProperties
+    ) {
         Map<String, Object> properties =
-                hibernateProperties.determineHibernateProperties(db2JpaProperties.getProperties(), new HibernateSettings());
+                hibernateProperties.determineHibernateProperties(dbJpaProperties.getProperties(), new HibernateSettings());
         return builder
                 .dataSource(dataSource)
-                .packages("com.example.expert.domain.entities.db2")
-                .persistenceUnit("db2")
+                .packages(PACKAGE_WITH_ENTITIES)
+                .persistenceUnit(NAME_DATABASE)
                 .properties(properties)
                 .build();
     }
 
-    @Bean
-    public PlatformTransactionManager db2TransactionManager(
-            @Qualifier("db2EntityManagerFactory") EntityManagerFactory entityManagerFactory) {
+    @Bean(NAME_DATABASE + "TransactionManager")
+    public PlatformTransactionManager dbTransactionManager(
+            @Qualifier(NAME_DATABASE + "EntityManagerFactory") EntityManagerFactory entityManagerFactory) {
         return new JpaTransactionManager(entityManagerFactory);
     }
 }

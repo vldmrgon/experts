@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Import;
 public class ExpertApplication {
 
   public static void main(String[] args) {
-    log.debug("Start application");
+    log.info("Start application");
     new SpringApplication(ExpertApplication.class).run(args);
   }
 
