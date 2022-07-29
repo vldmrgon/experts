@@ -2,6 +2,8 @@ package com.example.expert.configurations.database;
 
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateProperties;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateSettings;
@@ -10,6 +12,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -20,10 +23,11 @@ import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.util.Map;
 
+
 /**
  * Configuration for connecting to database.
  * <p>
- * For use this template, should change five parameters:
+ * For use this template, should change six parameters:
  * <p>
  * 1) Add a name database to entityManagerFactoryRef, for example: [nameDatabase]EntityManagerFactory <br>
  * 2) Add a name database to transactionManagerRet, for example: [nameDatabase]TransactionManager <br>
@@ -37,36 +41,40 @@ import java.util.Map;
  */
 
 @Configuration
-@EnableTransactionManagement
 @EnableJpaRepositories(
         entityManagerFactoryRef = "db2EntityManagerFactory",
         transactionManagerRef = "db2TransactionManager",
-        basePackages = {"com.example.expert.repositories"}
-)
+        basePackages = {"com.example.expert.repositories.db2"})
+@EnableTransactionManagement
+@EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class})
 public class Db2Config {
 
     private static final String NAME_DATABASE = "db2";
     private static final String PACKAGE_WITH_ENTITIES = "com.example.expert.domain.entities.db2";
 
+    @Primary
     @Bean(NAME_DATABASE + "DataSourceProperties")
-    @ConfigurationProperties(prefix = "application." + NAME_DATABASE + ".datasource")
+    @ConfigurationProperties("application." + NAME_DATABASE + ".datasource")
     public DataSourceProperties dbDataSourceProperties() {
         return new DataSourceProperties();
     }
 
+    @Primary
     @Bean(NAME_DATABASE + "HikariDataSource")
     @ConfigurationProperties("application." + NAME_DATABASE + ".datasource.hikari")
     public HikariDataSource dbHikariDataSource(
             @Qualifier(NAME_DATABASE + "DataSourceProperties") DataSourceProperties dbDataSourceProperties) {
-        return (HikariDataSource) dbDataSourceProperties.initializeDataSourceBuilder().build();
+        return dbDataSourceProperties.initializeDataSourceBuilder().type(HikariDataSource.class).build();
     }
 
+    @Primary
     @Bean(NAME_DATABASE + "JpaProperties")
     @ConfigurationProperties("application." + NAME_DATABASE + ".jpa")
     public JpaProperties dbJpaProperties() {
         return new JpaProperties();
     }
 
+    @Primary
     @Bean(NAME_DATABASE + "EntityManagerFactory")
     public LocalContainerEntityManagerFactoryBean dbEntityManagerFactory(
             EntityManagerFactoryBuilder builder,
@@ -74,8 +82,8 @@ public class Db2Config {
             @Qualifier(NAME_DATABASE + "JpaProperties") JpaProperties dbJpaProperties,
             HibernateProperties hibernateProperties
     ) {
-        Map<String, Object> properties =
-                hibernateProperties.determineHibernateProperties(dbJpaProperties.getProperties(), new HibernateSettings());
+        Map<String, Object> properties = hibernateProperties
+                .determineHibernateProperties(dbJpaProperties.getProperties(), new HibernateSettings());
         return builder
                 .dataSource(dataSource)
                 .packages(PACKAGE_WITH_ENTITIES)
@@ -84,6 +92,7 @@ public class Db2Config {
                 .build();
     }
 
+    @Primary
     @Bean(NAME_DATABASE + "TransactionManager")
     public PlatformTransactionManager dbTransactionManager(
             @Qualifier(NAME_DATABASE + "EntityManagerFactory") EntityManagerFactory entityManagerFactory) {
