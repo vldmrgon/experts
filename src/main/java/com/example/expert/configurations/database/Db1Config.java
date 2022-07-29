@@ -7,11 +7,12 @@ import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateProperties;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateSettings;
 import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties;
-import org.springframework.boot.autoconfigure.quartz.QuartzDataSource;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.annotation.Bean;
@@ -33,24 +34,24 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
 @EnableTransactionManagement
+@EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class})
 @EnableJpaRepositories(
         entityManagerFactoryRef = "db1EntityManagerFactory",
         transactionManagerRef = "db1TransactionManager",
-        basePackages = {"com.example.expert.repositories"}
+        basePackages = {"com.example.expert.repositories.db1"}
 )
 public class Db1Config {
 
     private static final String NAME_DATABASE = "db1";
     private static final String PACKAGE_WITH_ENTITIES = "com.example.expert.domain.entities.db1";
 
-    @Primary
+
     @Bean(NAME_DATABASE + "DataSourceProperties")
     @ConfigurationProperties(prefix = "application." + NAME_DATABASE + ".datasource")
     public DataSourceProperties dbDataSourceProperties() {
         return new DataSourceProperties();
     }
 
-    @Primary
     @Bean(NAME_DATABASE + "HikariDataSource")
     @ConfigurationProperties("application." + NAME_DATABASE + ".datasource.hikari")
     public HikariDataSource dbHikariDataSource(
@@ -58,14 +59,12 @@ public class Db1Config {
         return (HikariDataSource) dbDataSourceProperties.initializeDataSourceBuilder().build();
     }
 
-    @Primary
     @Bean(NAME_DATABASE + "JpaProperties")
     @ConfigurationProperties("application." + NAME_DATABASE + ".jpa")
     public JpaProperties dbJpaProperties() {
         return new JpaProperties();
     }
 
-    @Primary
     @Bean(NAME_DATABASE + "EntityManagerFactory")
     public LocalContainerEntityManagerFactoryBean dbEntityManagerFactory(
             EntityManagerFactoryBuilder builder,
@@ -83,10 +82,10 @@ public class Db1Config {
                 .build();
     }
 
-    @Primary
     @Bean(NAME_DATABASE + "TransactionManager")
     public PlatformTransactionManager dbTransactionManager(
             @Qualifier(NAME_DATABASE + "EntityManagerFactory") EntityManagerFactory entityManagerFactory) {
         return new JpaTransactionManager(entityManagerFactory);
     }
+
 }
